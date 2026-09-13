@@ -1,0 +1,162 @@
+/* Modern CSS reset: https://github.com/hankchizljaw/modern-css-reset */
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap');
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+body,
+h1,
+h2,
+h3,
+h4,
+p,
+figure,
+blockquote,
+dl,
+dd {
+    margin: 0;
+}
+
+ul[role="list"],
+ol[role="list"] {
+    list-style: none;
+}
+
+html:focus-within {
+    scroll-behavior: smooth;
+}
+
+body {
+    min-height: 100vh;
+    text-rendering: optimizeSpeed;
+    line-height: 1.5;
+}
+
+a:not([class]) {
+    text-decoration-skip-ink: auto;
+}
+
+img,
+picture {
+    max-width: 100%;
+    display: block;
+}
+
+input,
+button,
+textarea,
+select {
+    font: inherit;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html:focus-within {
+        scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+:root {
+    --color-bg: #fdfefe;
+    --color-text: #222;
+    --color-primary: #ff8e26;
+    --color-border: #ddd;
+    --font-base: "Roboto Mono", monospace;
+}
+
+body {
+    font-family: var(--font-base);
+    background-color: var(--color-bg);
+    color: var(--color-text);
+}
+
+/* Centered card layout, reused across auth pages */
+.auth-page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+}
+
+.auth-card {
+    width: 100%;
+    max-width: 380px;
+    background: #fff;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    padding: 2rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+}
+
+.auth-card h1 {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.form-group {
+    margin-bottom: 1.25rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.4rem;
+    font-size: 0.9rem;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 0.6rem 0.75rem;
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 1rem;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: var(--color-primary);
+}
+
+.btn-primary {
+    width: 100%;
+    padding: 0.7rem;
+    background-color: var(--color-primary);
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.btn-primary:hover {
+    opacity: 0.9;
+}
+
+.auth-footer {
+    margin-top: 1.25rem;
+    text-align: center;
+    font-size: 0.9rem;
+}
+
+.auth-footer a {
+    color: var(--color-primary);
+    text-decoration: none;
+}
+
+.auth-footer a:hover {
+    text-decoration: underline;
+}
