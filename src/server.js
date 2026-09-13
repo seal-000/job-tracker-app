@@ -15,18 +15,18 @@ const pool = require("./db/pool");
 
 const authRoutes = require("./routes/auth");
 
+const session = require("express-session");
+
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 app.use("/", authRoutes);
 
-
-// Test root route
+// Test root route, always redirect to the registration page
 app.get("/", (req, res) => {
     
     res.redirect("/register");
 });
-
 
 
 // Test database connection
@@ -46,6 +46,22 @@ app.get("/db-test", async (req, res) => {
         });
     }
 });
+
+// Session middleware configuration
+app.use(
+    session({
+        secret: process.env.SESSION_SECRET,
+        resave: false,
+        saveUninitialized: false,
+        cookie: {
+            httpOnly: true, 
+            secure: false, //change to true if using HTTPS in deployment
+            maxAge: 1000 * 60 * 60 * 24
+        }
+    })
+);
+
+
 
 
 app.listen(PORT, () => {
