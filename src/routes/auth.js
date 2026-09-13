@@ -81,4 +81,16 @@ router.post("/login", async (req, res) => {
 
 });
 
+router.post("/logout", (req, res) => {
+    req.session.destroy((error) => {
+        if (error) {
+            console.error(error);
+            return res.status(500).send("Logout failed");
+        }
+
+        res.redirect("/login");
+    });
+});
+
+
 module.exports = router;
