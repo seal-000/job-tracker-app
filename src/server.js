@@ -4,17 +4,32 @@ const express = require("express");
 
 const app = express();
 
+app.set("view engine", "ejs");
+app.set("views", "./src/views");
+
+app.use(express.static("src/public"));
+
 const PORT = process.env.PORT || 3000;
 
 const pool = require("./db/pool");
 
+const authRoutes = require("./routes/auth");
+
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
+app.use("/", authRoutes);
+
+
+// Test root route
 app.get("/", (req, res) => {
-    res.send("Job Application Tracker is running!");
+    
+    res.redirect("/register");
 });
 
+
+
+// Test database connection
 app.get("/db-test", async (req, res) => {
     try {
         const result = await pool.query("SELECT NOW()");
@@ -31,6 +46,7 @@ app.get("/db-test", async (req, res) => {
         });
     }
 });
+
 
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
