@@ -5,6 +5,9 @@ const path = require("path");
 
 const app = express();
 
+// Required so express-session can detect HTTPS via Vercel's proxy and set secure cookies
+app.set("trust proxy", 1);
+
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
@@ -18,12 +21,18 @@ const authRoutes = require("./routes/auth");
 const requireAuth = require("./middleware/auth");
 
 const session = require("express-session");
+const pgSession = require("connect-pg-simple")(session);
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 app.use(
     session({
+        store: new pgSession({
+            pool,
+            tableName: "session",
+            createTableIfMissing: true
+        }),
         secret: process.env.SESSION_SECRET,
         resave: false,
         saveUninitialized: false,
