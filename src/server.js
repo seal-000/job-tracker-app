@@ -19,9 +19,11 @@ const pool = require("./db/pool");
 
 const authRoutes = require("./routes/auth");
 const requireAuth = require("./middleware/auth");
+const exposeCsrfToken = require("./middleware/csrfToken");
 
 const session = require("express-session");
 const pgSession = require("connect-pg-simple")(session);
+const { csrfSync } = require("csrf-sync");
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -44,6 +46,14 @@ app.use(
         }
     })
 );
+
+// CSRF protection (Synchronizer Token Pattern) - token is tied to the session
+const { csrfSynchronisedProtection } = csrfSync({
+    getTokenFromRequest: (req) => req.body._csrf
+});
+
+app.use(csrfSynchronisedProtection);
+app.use(exposeCsrfToken);
 
 app.use("/", authRoutes);
 
@@ -80,6 +90,15 @@ app.get("/db-test", async (req, res) => {
 
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
+});
+
+// Handle invalid/missing CSRF tokens with a friendly response instead of the default Express error page
+app.use((error, req, res, next) => {
+    if (error.code === "EBADCSRFTOKEN") {
+        return res.status(403).send("Form session expired or invalid. Please go back and try again.");
+    }
+
+    next(error);
 });
 
 module.exports = app;

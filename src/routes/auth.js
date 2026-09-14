@@ -114,8 +114,22 @@ router.post("/login", async (req, res) => {
             return res.status(401).render("login", { error: "Invalid email or password" });
         }
 
-        req.session.userId = user.id;
-        res.redirect("/dashboard"); // Redirect to a protected route after successful login
+        // Regenerate the session on login to prevent session fixation attacks
+        req.session.regenerate((error) => {
+            if (error) {
+                return sendAuthError(res, 500, "Login failed", error);
+            }
+
+            req.session.userId = user.id;
+
+            req.session.save((error) => {
+                if (error) {
+                    return sendAuthError(res, 500, "Login failed", error);
+                }
+
+                res.redirect("/dashboard"); // Redirect to a protected route after successful login
+            });
+        });
 
     } catch (error) {
         return sendAuthError(res, 500, "Login failed", error);
