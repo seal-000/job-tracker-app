@@ -5,18 +5,62 @@ const pool = require("../db/pool");
 
 const router = express.Router();
 
+// Password validation function
+function validatePassword(password) {
+    if (typeof password !== "string" || password.trim().length === 0) {
+        return "Password is required";
+    }
+
+    if (password.length < 8) {
+        return "Password must be at least 8 characters long";
+    }
+
+    if (!/[A-Z]/.test(password)) {
+        return "Password must contain at least one uppercase letter";
+    }
+
+    if (!/[a-z]/.test(password)) {
+        return "Password must contain at least one lowercase letter";
+    }
+
+    if (!/\d/.test(password)) {
+        return "Password must contain at least one number";
+    }
+
+    return null;
+}
+
+// Authentication error handling function
+function sendAuthError(res, status, message, error = null) {
+    if (error) {
+        console.error(error);
+    }
+
+    res.status(status).send(message);
+}
+
 
 router.get("/register", (req, res) => {
-    res.render("register");
+    res.render("register", { error: null });
 });
 
 router.get("/login", (req, res) => {
-    res.render("login");
+    res.render("login", { error: null });
 });
 
 router.post("/register", async (req, res) => {
     try {
-        const { email, password } = req.body;
+        const email = String(req.body.email || "").trim().toLowerCase();
+        const password = req.body.password;
+
+        if (!email || !/\S+@\S+\.\S+/.test(email)) {
+            return res.status(400).render("register", { error: "Please enter a valid email address" });
+        }
+
+        const passwordError = validatePassword(password);
+        if (passwordError) {
+            return res.status(400).render("register", { error: passwordError });
+        }
 
         const existingUser = await pool.query(
             "SELECT id FROM users WHERE email = $1",
@@ -24,7 +68,7 @@ router.post("/register", async (req, res) => {
         );
 
         if (existingUser.rows.length > 0) {
-            return res.status(400).send("User already exists");
+            return res.status(409).render("register", { error: "User already exists" });
         }
 
         const passwordHash = await bcrypt.hash(password, 10);
@@ -40,8 +84,7 @@ router.post("/register", async (req, res) => {
         res.redirect("/login");
 
     } catch (error) {
-        console.error(error);
-        res.status(500).send("Registration failed");
+        return sendAuthError(res, 500, "Registration failed", error);
     }
 });
 
@@ -57,7 +100,7 @@ router.post("/login", async (req, res) => {
         );
 
         if (result.rows.length === 0) {
-            return res.status(401).send("Invalid email or password");
+            return res.status(401).render("login", { error: "Invalid email or password" });
         }
 
         const user = result.rows[0];
@@ -68,15 +111,14 @@ router.post("/login", async (req, res) => {
         );
 
         if (!passwordMatches) {
-            return res.status(401).send("Invalid email or password");
+            return res.status(401).render("login", { error: "Invalid email or password" });
         }
 
         req.session.userId = user.id;
         res.redirect("/dashboard"); // Redirect to a protected route after successful login
 
     } catch (error) {
-        console.error(error);
-        res.status(500).send("Login failed");
+        return sendAuthError(res, 500, "Login failed", error);
     }
 
 });
@@ -84,8 +126,7 @@ router.post("/login", async (req, res) => {
 router.post("/logout", (req, res) => {
     req.session.destroy((error) => {
         if (error) {
-            console.error(error);
-            return res.status(500).send("Logout failed");
+            return sendAuthError(res, 500, "Logout failed", error);
         }
 
         res.redirect("/login");

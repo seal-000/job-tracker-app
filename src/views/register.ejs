@@ -11,6 +11,10 @@
     <div class="auth-page">
         <div class="auth-card">
             <h1>Create Account</h1>
+                    
+            <% if (typeof error !== 'undefined' && error) { %>
+                <div class="auth-error"><%= error %></div>
+            <% } %>
 
             <form action="/register" method="POST">
 
@@ -31,6 +35,9 @@
                         id="password"
                         name="password"
                         required
+                        minlength="8"
+                        pattern="(?=.*[A-Z])(?=.*[a-z])(?=.*\d).{8,}"
+                        title="Password must be at least 8 characters, include one uppercase letter, one lowercase letter, and one number"
                     >
                 </div>
 

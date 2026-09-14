@@ -106,6 +106,16 @@ body {
     text-align: center;
 }
 
+.auth-error {
+    background: #fff0f0;
+    color: #b42318;
+    border: 1px solid #f5c2c7;
+    border-radius: 4px;
+    padding: 0.7rem 0.8rem;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+}
+
 .form-group {
     margin-bottom: 1.25rem;
 }

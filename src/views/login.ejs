@@ -12,6 +12,10 @@
         <div class="auth-card">
             <h1>Login</h1>
 
+            <% if (typeof error !== 'undefined' && error) { %>
+                <div class="auth-error"><%= error %></div>
+            <% } %>
+
             <form action="/login" method="POST">
 
                 <div class="form-group">
