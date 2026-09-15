@@ -3,24 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <title>Job Tracker</title>
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 
 <body>
 
-    <h1>Job Application Tracker</h1>
+    <%- include('partials/navbar') %>
 
-    <p>You are logged in.</p>
+    <div id="jt-root">
+        <div class="jt-header">
+            <p class="jt-title">Job Search Pipeline</p>
+            <p class="jt-sub">Track every application from submission to outcome.</p>
+        </div>
 
-    <p>
-        User ID: <%= userId %>
-    </p>
+        <div id="jt-stats" class="jt-stats"></div>
 
-    <form action="/logout" method="POST">
-        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-        <button type="submit">
-            Logout
-        </button>
-    </form>
+        <div class="jt-addbar">
+            <input id="jt-company" type="text" placeholder="Company">
+            <input id="jt-role" type="text" placeholder="Role">
+            <button class="jt-addbtn" id="jt-add">Add application</button>
+        </div>
+
+        <div id="jt-board" class="jt-board">
+            <div class="jt-loading">Loading your pipeline…</div>
+        </div>
+    </div>
+
+    <script>
+        window.CSRF_TOKEN = "<%= csrfToken %>";
+    </script>
+    <script src="/js/dashboard.js"></script>
 
 </body>
 </html>

@@ -1,0 +1,8 @@
+<nav class="jt-navbar">
+    <span class="jt-navbar-title">Job Application Tracker</span>
+
+    <form action="/logout" method="POST" class="jt-navbar-logout">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <button type="submit" class="jt-navbar-logout-btn">Logout</button>
+    </form>
+</nav>
