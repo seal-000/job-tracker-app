@@ -18,6 +18,7 @@ const PORT = process.env.PORT || 3000;
 const pool = require("./db/pool");
 
 const authRoutes = require("./routes/auth");
+const applicationsRoutes = require("./routes/applications");
 const requireAuth = require("./middleware/auth");
 const exposeCsrfToken = require("./middleware/csrfToken");
 
@@ -56,6 +57,7 @@ app.use(csrfSynchronisedProtection);
 app.use(exposeCsrfToken);
 
 app.use("/", authRoutes);
+app.use("/api/applications", applicationsRoutes);
 
 // Test root route, always redirect to the registration page
 app.get("/", (req, res) => {
