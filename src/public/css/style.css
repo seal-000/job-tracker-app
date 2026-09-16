@@ -140,6 +140,20 @@ body {
     border-color: var(--color-primary);
 }
 
+.password-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: 0.5rem;
+    font-size: 0.85rem;
+    cursor: pointer;
+}
+
+.password-checkbox input {
+    width: auto;
+    cursor: pointer;
+}
+
 .btn-primary {
     width: 100%;
     padding: 0.7rem;
@@ -170,3 +184,222 @@ body {
 .auth-footer a:hover {
     text-decoration: underline;
 }
+
+/* Navbar */
+.jt-navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.5rem;
+    background: #fff;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.jt-navbar-title {
+    font-weight: 600;
+}
+
+.jt-navbar-logout-btn {
+    padding: 0.4rem 0.9rem;
+    background: transparent;
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    font-family: inherit;
+    cursor: pointer;
+}
+
+.jt-navbar-logout-btn:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+}
+
+/* Dashboard / pipeline board */
+#jt-root {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 1.5rem;
+}
+
+.jt-header {
+    margin-bottom: 1.25rem;
+}
+
+.jt-title {
+    font-size: 1.4rem;
+    font-weight: 600;
+}
+
+.jt-sub {
+    color: #666;
+    font-size: 0.9rem;
+    margin-top: 0.25rem;
+}
+
+.jt-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+}
+
+.jt-stat {
+    background: #fff;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    padding: 0.9rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+}
+
+.jt-stat-num {
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: var(--color-primary);
+}
+
+.jt-stat-label {
+    font-size: 0.8rem;
+    color: #666;
+}
+
+.jt-addbar {
+    display: flex;
+    gap: 0.6rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.jt-addbar input {
+    flex: 1;
+    min-width: 160px;
+    padding: 0.6rem 0.75rem;
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 0.95rem;
+}
+
+.jt-addbar input:focus {
+    outline: none;
+    border-color: var(--color-primary);
+}
+
+.jt-addbtn {
+    padding: 0.6rem 1.1rem;
+    background-color: var(--color-primary);
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 0.95rem;
+    cursor: pointer;
+}
+
+.jt-addbtn:hover {
+    opacity: 0.9;
+}
+
+.jt-board {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+    align-items: start;
+}
+
+.jt-loading,
+.jt-empty {
+    color: #888;
+    font-size: 0.85rem;
+    padding: 0.75rem 0;
+}
+
+.jt-col {
+    background: #fafafa;
+    border: 1px solid var(--color-border);
+    border-top: 3px solid var(--col-color, var(--color-primary));
+    border-radius: 8px;
+    padding: 0.75rem;
+    min-height: 120px;
+}
+
+.jt-col-head {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-bottom: 0.6rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.jt-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--col-color, var(--color-primary));
+    display: inline-block;
+}
+
+.jt-col-name {
+    flex: 1;
+}
+
+.jt-col-count {
+    color: #888;
+    font-weight: 400;
+}
+
+.jt-card {
+    background: #fff;
+    border: 1px solid var(--color-border);
+    border-left: 3px solid var(--col-color, var(--color-primary));
+    border-radius: 6px;
+    padding: 0.65rem 0.75rem;
+    margin-bottom: 0.6rem;
+    font-size: 0.85rem;
+}
+
+.jt-card-company {
+    font-weight: 600;
+}
+
+.jt-card-role {
+    color: #555;
+    margin-top: 0.15rem;
+}
+
+.jt-card-date {
+    color: #999;
+    font-size: 0.75rem;
+    margin-top: 0.35rem;
+}
+
+.jt-card-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+    margin-top: 0.5rem;
+}
+
+.jt-move-btn,
+.jt-del-btn {
+    font-family: inherit;
+    font-size: 0.7rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 3px;
+    border: 1px solid var(--color-border);
+    background: #fff;
+    cursor: pointer;
+}
+
+.jt-move-btn:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+}
+
+.jt-del-btn:hover {
+    border-color: #b5573b;
+    color: #b5573b;
+}
+
