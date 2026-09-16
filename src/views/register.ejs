@@ -41,6 +41,10 @@
                         pattern="(?=.*[A-Z])(?=.*[a-z])(?=.*\d).{8,}"
                         title="Password must be at least 8 characters, include one uppercase letter, one lowercase letter, and one number"
                     >
+                    <label class="password-checkbox">
+                        <input type="checkbox" data-password-toggle="password">
+                        Show password
+                    </label>
                 </div>
 
                 <button type="submit" class="btn-primary">
@@ -55,6 +59,8 @@
             </p>
         </div>
     </div>
+
+    <script src="/js/password-toggle.js"></script>
 
 </body>
 </html>
