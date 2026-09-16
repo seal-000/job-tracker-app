@@ -1,4 +1,6 @@
-require("dotenv").config();
+require("dotenv").config({
+    path: process.env.NODE_ENV === "test" ? ".env.test" : ".env"
+});
 
 const express = require("express");
 const path = require("path");
@@ -90,10 +92,6 @@ app.get("/db-test", async (req, res) => {
     }
 });
 
-app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
-});
-
 // Handle invalid/missing CSRF tokens with a friendly response instead of the default Express error page
 app.use((error, req, res, next) => {
     if (error.code === "EBADCSRFTOKEN") {
@@ -104,3 +102,9 @@ app.use((error, req, res, next) => {
 });
 
 module.exports = app;
+
+if (require.main === module) {
+    app.listen(PORT, () => {
+        console.log(`Server running on http://localhost:${PORT}`);
+    });
+}
