@@ -116,6 +116,10 @@ body {
     font-size: 0.9rem;
 }
 
+.auth-success {
+    padding-bottom: 0.7rem;
+}
+
 .form-group {
     margin-bottom: 1.25rem;
 }
