@@ -52,7 +52,7 @@ app.use(
 
 // CSRF protection (Synchronizer Token Pattern) - token is tied to the session
 const { csrfSynchronisedProtection } = csrfSync({
-    getTokenFromRequest: (req) => req.body._csrf
+    getTokenFromRequest: (req) => req.body?._csrf
 });
 
 app.use(csrfSynchronisedProtection);
@@ -96,6 +96,10 @@ app.get("/db-test", async (req, res) => {
 app.use((error, req, res, next) => {
     if (error.code === "EBADCSRFTOKEN") {
         return res.status(403).send("Form session expired or invalid. Please go back and try again.");
+    }
+
+    if (error instanceof SyntaxError && error.status === 400 && req.path.startsWith("/api/")) {
+        return res.status(400).json({ error: "Malformed JSON body" });
     }
 
     next(error);

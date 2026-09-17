@@ -8,6 +8,45 @@ const router = express.Router();
 const VALID_STATUSES = ["Applied", "Screening", "Interview", "Offer", "Accepted", "Rejected"];
 const MAX_COMPANY_LENGTH = 25;
 const MAX_ROLE_LENGTH = 25;
+const MAX_LOCATION_LENGTH = 25;
+const MAX_JOB_URL_LENGTH = 255;
+const MAX_SALARY_LENGTH = 13;
+
+// Helper function to parse and validate application IDs from request parameters
+function parseApplicationId(value) {
+    if (!/^[1-9]\d*$/.test(value)) {
+        return null;
+    }
+
+    const applicationId = Number(value);
+    return Number.isSafeInteger(applicationId) ? applicationId : null;
+}
+
+// Helper function to check if a value is a plain object (not null, not an array)
+function isPlainObject(value) {
+    return value !== null && typeof value === "object" && !Array.isArray(value);
+}
+
+// Helper function to validate the request body for creating or updating an application
+function validateApplicationBody(body) {
+    if (!isPlainObject(body)) {
+        return "Request body must be a JSON object";
+    }
+
+    for (const field of ["company", "role", "location", "job_url"]) {
+        if (body[field] !== undefined && typeof body[field] !== "string") {
+            return `${field} must be a string`;
+        }
+    }
+
+    if (body.salary !== undefined &&
+        typeof body.salary !== "string" &&
+        (typeof body.salary !== "number" || !Number.isFinite(body.salary))) {
+        return "salary must be a string or number";
+    }
+
+    return null;
+}
 
 // Every route below requires an authenticated session
 router.use(requireAuth);
@@ -32,18 +71,23 @@ router.get("/", async (req, res) => {
 
 // Create a new application owned by the logged-in user
 router.post("/", async (req, res) => {
-    
-    
+
+
     let client;
 
     try {
+        const bodyError = validateApplicationBody(req.body);
+
+        if (bodyError) {
+            return res.status(400).json({ error: bodyError });
+        }
 
         // Extract and validate input fields from the request body
-        const company = String(req.body.company || "").trim();
-        const role = String(req.body.role || "").trim();
-        const location = String(req.body.location || "").trim();
-        const jobUrl = String(req.body.job_url || "").trim();
-        const salaryInput = String(req.body.salary || "").trim();
+        const company = (req.body.company || "").trim();
+        const role = (req.body.role || "").trim();
+        const location = (req.body.location || "").trim();
+        const jobUrl = (req.body.job_url || "").trim();
+        const salaryInput = req.body.salary === undefined ? "" : String(req.body.salary).trim();
         const salary = salaryInput || null;
 
         // If there is no company provided, return an error
@@ -63,6 +107,15 @@ router.post("/", async (req, res) => {
             return res.status(400).json({ error: "Role must be 25 characters or fewer" });
         }
 
+        if (location.length > MAX_LOCATION_LENGTH) {
+            return res.status(400).json({ error: "Location must be 25 characters or fewer" });
+        }
+
+        if (jobUrl.length > MAX_JOB_URL_LENGTH) {
+            return res.status(400).json({ error: "Job URL must be 255 characters or fewer" });
+        }
+
+
         if (jobUrl) {
             try {
                 const parsedUrl = new URL(jobUrl);
@@ -73,6 +126,10 @@ router.post("/", async (req, res) => {
             } catch {
                 return res.status(400).json({ error: "Job URL must be a valid URL" });
             }
+        }
+
+        if (salary && salary.length > MAX_SALARY_LENGTH) {
+            return res.status(400).json({ error: "Salary must be 10 digits or fewer, with up to 2 decimal places" });
         }
 
         if (salary && !/^\d{1,10}(\.\d{1,2})?$/.test(salary)) {
@@ -124,12 +181,21 @@ router.patch("/:id/status", async (req, res) => {
     let client;
 
     try {
+        const applicationId = parseApplicationId(req.params.id);
+
+        if (applicationId === null) {
+            return res.status(400).json({ error: "Invalid application ID" });
+        }
+
+        if (!isPlainObject(req.body)) {
+            return res.status(400).json({ error: "Request body must be a JSON object" });
+        }
 
         // Extract the new status from the request body
         const { status } = req.body;
 
         // Validate the requested status against the list of valid statuses
-        if (!VALID_STATUSES.includes(status)) {
+        if (typeof status !== "string" || !VALID_STATUSES.includes(status)) {
             return res.status(400).json({ error: "Invalid status" });
         }
 
@@ -144,13 +210,19 @@ router.patch("/:id/status", async (req, res) => {
              FROM (SELECT current_status FROM applications WHERE id = $2 AND user_id = $3) AS prev
              WHERE a.id = $2 AND a.user_id = $3
              RETURNING a.id, a.company, a.position AS role, a.current_status AS status, a.created_at, prev.current_status AS old_status`,
-            [status, req.params.id, req.session.userId]
+            [status, applicationId, req.session.userId]
         );
 
         // Roll back the transaction if the application status update did not affect any rows
         if (result.rows.length === 0) {
             await client.query("ROLLBACK");
             return res.status(404).json({ error: "Application not found" });
+        }
+
+        // Roll back the transaction if the new status is the same as the old status
+        if (result.rows[0].old_status === status) {
+            await client.query("ROLLBACK");
+            return res.status(400).json({ error: "Application is already in this status" });
         }
 
         // Extract the old status and the rest of the application details
@@ -160,7 +232,7 @@ router.patch("/:id/status", async (req, res) => {
         await client.query(
             `INSERT INTO application_status_history (application_id, old_status, new_status)
              VALUES ($1, $2, $3)`,
-            [req.params.id, old_status, status]
+            [applicationId, old_status, status]
         );
 
         // Commit the transaction and return the updated application
@@ -183,13 +255,18 @@ router.patch("/:id/status", async (req, res) => {
 // Delete an application -> ownership enforced in the WHERE clause
 router.delete("/:id", async (req, res) => {
     try {
+        const applicationId = parseApplicationId(req.params.id);
+
+        if (applicationId === null) {
+            return res.status(400).json({ error: "Invalid application ID" });
+        }
 
         // Attempt to delete the application, ensuring ownership via the WHERE clause
         const result = await pool.query(
             `DELETE FROM applications
              WHERE id = $1 AND user_id = $2
              RETURNING id`,
-            [req.params.id, req.session.userId]
+            [applicationId, req.session.userId]
         );
 
         // If no rows were affected, the application was not found or the user does not own it
