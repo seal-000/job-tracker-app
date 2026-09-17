@@ -369,6 +369,25 @@ body {
     margin-top: 0.15rem;
 }
 
+.jt-card-location {
+    color: #666;
+    font-size: 0.8rem;
+    margin-top: 0.15rem;
+}
+
+.jt-card-salary {
+    color: #555;
+    font-size: 0.8rem;
+    margin-top: 0.15rem;
+}
+
+.jt-card-link {
+    display: inline-block;
+    margin-top: 0.35rem;
+    color: var(--color-primary);
+    font-size: 0.75rem;
+}
+
 .jt-card-date {
     color: #999;
     font-size: 0.75rem;

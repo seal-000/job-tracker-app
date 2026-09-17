@@ -6,6 +6,8 @@ const requireAuth = require("../middleware/auth");
 const router = express.Router();
 
 const VALID_STATUSES = ["Applied", "Screening", "Interview", "Offer", "Accepted", "Rejected"];
+const MAX_COMPANY_LENGTH = 25;
+const MAX_ROLE_LENGTH = 25;
 
 // Every route below requires an authenticated session
 router.use(requireAuth);
@@ -14,7 +16,7 @@ router.use(requireAuth);
 router.get("/", async (req, res) => {
     try {
         const result = await pool.query(
-            `SELECT id, company, position AS role, current_status AS status, created_at
+            `SELECT id, company, position AS role, location, job_url, salary, current_status AS status, created_at
              FROM applications
              WHERE user_id = $1
              ORDER BY created_at DESC`,
@@ -39,10 +41,42 @@ router.post("/", async (req, res) => {
         // Extract and validate input fields from the request body
         const company = String(req.body.company || "").trim();
         const role = String(req.body.role || "").trim();
+        const location = String(req.body.location || "").trim();
+        const jobUrl = String(req.body.job_url || "").trim();
+        const salaryInput = String(req.body.salary || "").trim();
+        const salary = salaryInput || null;
 
         // If there is no company provided, return an error
         if (!company) {
             return res.status(400).json({ error: "Company is required" });
+        }
+
+        if (!role) {
+            return res.status(400).json({ error: "Role is required" });
+        }
+
+        if (company.length > MAX_COMPANY_LENGTH) {
+            return res.status(400).json({ error: "Company must be 25 characters or fewer" });
+        }
+
+        if (role.length > MAX_ROLE_LENGTH) {
+            return res.status(400).json({ error: "Role must be 25 characters or fewer" });
+        }
+
+        if (jobUrl) {
+            try {
+                const parsedUrl = new URL(jobUrl);
+
+                if (!['http:', 'https:'].includes(parsedUrl.protocol)) {
+                    return res.status(400).json({ error: "Job URL must use http or https" });
+                }
+            } catch {
+                return res.status(400).json({ error: "Job URL must be a valid URL" });
+            }
+        }
+
+        if (salary && !/^\d{1,10}(\.\d{1,2})?$/.test(salary)) {
+            return res.status(400).json({ error: "Salary must be a nonnegative number with up to 2 decimal places" });
         }
 
         // Call the database to create the new application
@@ -51,10 +85,10 @@ router.post("/", async (req, res) => {
 
         // Insert the new application into the database
         const result = await client.query(
-            `INSERT INTO applications (user_id, company, position, current_status)
-             VALUES ($1, $2, $3, 'Applied')
-             RETURNING id, company, position AS role, current_status AS status, created_at`,
-            [req.session.userId, company, role || null]
+            `INSERT INTO applications (user_id, company, position, location, job_url, salary, current_status)
+             VALUES ($1, $2, $3, $4, $5, $6, 'Applied')
+             RETURNING id, company, position AS role, location, job_url, salary, current_status AS status, created_at`,
+            [req.session.userId, company, role, location || null, jobUrl || null, salary]
         );
 
         // Retrieve the newly created application from the result
