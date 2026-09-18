@@ -31,11 +31,13 @@ A secure full-stack web application for managing job applications through a Kanb
 
 ## Screenshots
 
+<p align="center">
+  <img width="700" alt="Dashboard screenshot" src="https://github.com/user-attachments/assets/c1e21661-3900-4cb2-a5e5-85972ad94a3e" />
+</p>
 
-<img width="636" height="782" alt="Screenshot 2026-09-17 162640" src="https://github.com/user-attachments/assets/c1e21661-3900-4cb2-a5e5-85972ad94a3e" />
-
-<img width="1586" height="986" alt="image" src="https://github.com/user-attachments/assets/6f52cd7e-4eac-410e-b280-3725fea0d564" />
-
+<p align="center">
+  <img width="900" alt="Application tracker overview" src="https://github.com/user-attachments/assets/6f52cd7e-4eac-410e-b280-3725fea0d564" />
+</p>
 
 ## Tech Stack
 
