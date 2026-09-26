@@ -388,24 +388,6 @@ body {
     font-size: 0.9rem;
 }
 
-.register-submit-arrow {
-    position: relative;
-    width: 0.8rem;
-    height: 1px;
-    background: currentColor;
-}
-
-.register-submit-arrow::after {
-    position: absolute;
-    top: -0.23rem;
-    right: 0;
-    width: 0.42rem;
-    height: 0.42rem;
-    border-top: 1px solid currentColor;
-    border-right: 1px solid currentColor;
-    content: "";
-    transform: rotate(45deg);
-}
 
 .register-footer {
     display: flex;
