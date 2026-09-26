@@ -2,65 +2,102 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Register</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Create account</title>
+    <link rel="icon" href="/favicon.ico">
     <link rel="stylesheet" href="/css/style.css">
 </head>
 
 <body>
+    <main class="auth-page register-page">
+        <section class="register-story" aria-label="JobTracker introduction">
+            <a class="register-brand" href="/register" aria-label="JobTracker home">
+                <i data-lucide="briefcase-business"></i>  
+                <span>JOB TRACKER</span>
+            </a>
 
-    <div class="auth-page">
-        <div class="auth-card">
-            <h1>Create Account</h1>
-                    
+            <div class="register-story-copy">
+                <p class="register-eyebrow" data-depth="0.3">JOB APPLICATION TRACKER</p>
+                <h1 data-depth="1">Stay on top of<br class="register-desktop-break"> every application.</h1>
+                <p class="register-description" data-depth="0.65">Track applications, follow your progress, and keep your job search organized in one place.</p>
+                <div class="register-tagline" data-depth="0.45">
+                    <span aria-hidden="true"></span>
+                    <p>One search. One place. Clear progress.</p>
+                </div>
+            </div>
+            <span class="register-dots register-dots-top" aria-hidden="true"></span>
+            <span class="register-dots register-dots-bottom" aria-hidden="true"></span>
+            <span class="register-ribbon register-ribbon-one" aria-hidden="true"></span>
+            <span class="register-ribbon register-ribbon-two" aria-hidden="true"></span>
+        </section>
+
+        <section class="register-form-panel" aria-labelledby="register-title">
+            <div class="register-form-wrap">
+                <header class="register-form-heading">
+                    <h2 id="register-title">Create account</h2>
+                    <p>Start organizing your job search today.</p>
+                </header>
+
             <% if (typeof error !== 'undefined' && error) { %>
                 <div class="auth-error"><%= error %></div>
             <% } %>
 
-            <form action="/register" method="POST">
+                <form action="/register" method="POST" class="register-form">
 
-                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
 
-                <div class="form-group">
-                    <label for="email">Email</label>
-                    <input
-                        type="email"
-                        id="email"
-                        name="email"
-                        required
-                    >
-                </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            placeholder="your@email.com"
+                            autocomplete="email"
+                            required
+                        >
+                    </div>
 
-                <div class="form-group">
-                    <label for="password">Password</label>
-                    <input
-                        type="password"
-                        id="password"
-                        name="password"
-                        required
-                        minlength="8"
-                        pattern="(?=.*[A-Z])(?=.*[a-z])(?=.*\d).{8,}"
-                        title="Password must be at least 8 characters, include one uppercase letter, one lowercase letter, and one number"
-                    >
-                    <label class="password-checkbox">
-                        <input type="checkbox" data-password-toggle="password">
-                        Show password
-                    </label>
-                </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            placeholder="Create a password"
+                            autocomplete="new-password"
+                            required
+                            minlength="8"
+                            pattern="(?=.*[A-Z])(?=.*[a-z])(?=.*\d).{8,}"
+                            title="Password must be at least 8 characters, include one uppercase letter, one lowercase letter, and one number"
+                        >
+                        <label class="password-checkbox">
+                            <input type="checkbox" data-password-toggle="password">
+                            Show password
+                        </label>
+                    </div>
 
-                <button type="submit" class="btn-primary">
-                    Register
-                </button>
+                    <button type="submit" class="btn-primary register-submit">
+                        <span>Create account</span>
+                        <span class="register-submit-arrow" aria-hidden="true"></span>
+                    </button>
 
-            </form>
+                </form>
 
-            <p class="auth-footer">
-                Already have an account?
-                <a href="/login">Login</a>
-            </p>
-        </div>
-    </div>
+                <p class="auth-footer register-footer">
+                    <span>Already have an account?</span>
+                    <a href="/login">Sign in</a>
+                </p>
+            </div>
+        </section>
+    </main>
 
     <script src="/js/password-toggle.js"></script>
+    <script src="/js/register-story.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        lucide.createIcons();
+    </script>
 
 </body>
 </html>
